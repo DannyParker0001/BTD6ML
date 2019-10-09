@@ -80,7 +80,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="src\il2cpp.cs" />
+    <Compile Include="src\Steam\SteamUtils.cs" />
     <Compile Include="src\uiBackend.cs" />
+    <Compile Include="src\Utils.cs" />
     <Compile Include="src\Windows\IO.cs" />
     <Compile Include="src\Windows\PE.cs" />
     <Page Include="GUI\MainWindow.xaml">

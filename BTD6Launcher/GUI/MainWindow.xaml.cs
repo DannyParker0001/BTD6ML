@@ -19,6 +19,7 @@ using Btd6Launcher.Windows.PE;
 using Btd6Launcher.uiBackend;
 using System.Runtime.InteropServices;
 using Btd6Launcher.Windows.IO;
+using Btd6Launcher.Steam;
 
 namespace Btd6Launcher
 {
@@ -28,7 +29,7 @@ namespace Btd6Launcher
     /// 
 
 
-   
+
 
 
     public partial class MainWindow : Window
@@ -142,24 +143,26 @@ namespace Btd6Launcher
         {
             unsafe
             {
-                IntPtr filePtr = IO.LoadLibrary("C:\\SteamLibrary\\steamapps\\common\\BloonsTD6\\GameAssembly.dll");
+                //IntPtr filePtr = IO.LoadLibrary("C:\\SteamLibrary\\steamapps\\common\\BloonsTD6\\GameAssembly.dll");
 
-                byte* peFile = (byte*)(filePtr);
+                //byte* peFile = (byte*)(filePtr);
 
-                Dictionary<string, UInt64> MemoryExports = PE.dumpSymbolsFromMemory(peFile);
-                // Works!
+                //Dictionary<string, UInt64> MemoryExports = PE.dumpSymbolsFromMemory(peFile);
+                //// Works!
 
-                byte[] Bin = File.ReadAllBytes("C:\\SteamLibrary\\steamapps\\common\\BloonsTD6\\GameAssembly.dll");
+                //byte[] Bin = File.ReadAllBytes("C:\\SteamLibrary\\steamapps\\common\\BloonsTD6\\GameAssembly.dll");
 
 
-                Dictionary<string, UInt64> FileExports;
+                //Dictionary<string, UInt64> FileExports;
 
-                fixed (byte* pBin = Bin)
-                {
-                    FileExports = PE.dumpSymbolsFromFile(pBin);
-                }
+                //fixed (byte* pBin = Bin)
+                //{
+                //    FileExports = PE.dumpSymbolsFromFile(pBin);
+                //}
 
-             
+                string dir = SteamUtils.GetGameDir(SteamUtils.BTD6AppID, SteamUtils.BTD6Name);
+
+
 
                 int x = 5;
             }
@@ -399,13 +402,13 @@ namespace Btd6Launcher
             mod.Drop += new DragEventHandler(this.ddPanelDrop);
 
             mod.AllowDrop = true;
-            
+
 
             destination.Children.Add(mod);
         }
 
 
-        
+
 
         public void modEnable(object sender, RoutedEventArgs e)
         {
@@ -434,10 +437,10 @@ namespace Btd6Launcher
                    || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
 
-                        DataObject dragData = new DataObject();
-                        dragData.SetData(mod.modInfo.type.ToString(), mod);
+                    DataObject dragData = new DataObject();
+                    dragData.SetData(mod.modInfo.type.ToString(), mod);
 
-                        DragDrop.DoDragDrop(this, dragData, DragDropEffects.Move);
+                    DragDrop.DoDragDrop(this, dragData, DragDropEffects.Move);
 
 
                 }
@@ -452,7 +455,7 @@ namespace Btd6Launcher
             if (mod.isDragged == true)
             {
                 Vector diff = mod.originDrag - e.GetPosition(null);
-                if(Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance
+                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance
                    || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
                     //
@@ -486,11 +489,11 @@ namespace Btd6Launcher
 
         private void ddVisibiltyInjected(object sender, DragEventArgs e)
         {
-            
+
             if (!e.Data.GetDataPresent(ModType.Runtime.ToString()))
             {
                 e.Effects = DragDropEffects.None;
-                
+
             }
             e.Handled = true;
         }
@@ -500,7 +503,7 @@ namespace Btd6Launcher
             if (!e.Data.GetDataPresent(ModType.AheadOfTime.ToString()))
             {
                 e.Effects = DragDropEffects.None;
-                
+
             }
             e.Handled = true;
         }
@@ -511,7 +514,7 @@ namespace Btd6Launcher
                 e.Data.GetDataPresent(ModType.AheadOfTime.ToString())))
             {
                 e.Effects = DragDropEffects.None;
-                
+
             }
             e.Handled = true;
         }
@@ -581,7 +584,7 @@ namespace Btd6Launcher
                     modlist.Children.Remove(mod);
                     ModsInjectedSP.Children.Add(mod);
                     ddMovePanel(mod, ModsInjectedSP, e.GetPosition(this));
-                } 
+                }
             }
         }
 
@@ -656,7 +659,7 @@ namespace Btd6Launcher
         }
         private void ddDpDropDisabled(object sender, DragEventArgs e)
         {
-            
+
             if (e.Data.GetDataPresent(ModType.Runtime.ToString()))
             {
                 ModPanel mod = (ModPanel)e.Data.GetData(ModType.Runtime.ToString());
@@ -675,7 +678,7 @@ namespace Btd6Launcher
                 togglemod.IsChecked = false;
                 ModsDisabledSP.Children.Insert(0, mod);
             }
-  
+
         }
 
 
@@ -708,7 +711,7 @@ namespace Btd6Launcher
             }
         }
 
-        public void modToggleVisibility (object sender, RoutedEventArgs e)
+        public void modToggleVisibility(object sender, RoutedEventArgs e)
         {
             CheckBox chkbox = (CheckBox)sender;
             DockPanel mdp = (DockPanel)chkbox.Parent;
@@ -745,7 +748,7 @@ namespace Btd6Launcher
 
 
 
-            
+
         }
 
         public void viewDependancies(object sender, RoutedEventArgs e)
@@ -766,7 +769,7 @@ namespace Btd6Launcher
             MessageBox.Show("TODO: Implement mod deleting...");
         }
 
-        public void FlushCache (object sender, RoutedEventArgs e)
+        public void FlushCache(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("TODO: Figure out if cache is even worth it");
         }
@@ -786,6 +789,6 @@ namespace Btd6Launcher
 
         }
 
- 
+
     }
 }
