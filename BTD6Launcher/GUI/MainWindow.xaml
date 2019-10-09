@@ -1,0 +1,196 @@
+﻿<Window x:Class="Btd6Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="Btd6Launcher"
+        mc:Ignorable="d"
+        Title="Bloons TD 6 Modding API" Height="450" Width="800" MinHeight="300" MinWidth="600" Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <!-- Colour Resources...-->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources\Colours.xaml"/>
+                <ResourceDictionary Source="Resources\StylesAndTemplates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+        <!-- Style resources -->
+
+    </Window.Resources>
+
+
+    <Grid>
+        <TabControl Background="{StaticResource ColourBackground}" BorderBrush="{StaticResource ColourMidground}" Margin="5,5,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <TabControl.Resources>
+
+
+            </TabControl.Resources>
+            <!-- For all the fucking mods of course, most of this should be in the xaml.cs -->
+            <TabItem Header="Mods">
+                <Grid Name="ModsGrid">
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                        <StackPanel>
+
+                            <DockPanel Name="ModsInjectedDP"  Background="Transparent"
+                                       AllowDrop="True" Drop="ddDpDropInjected" DragOver="ddVisibiltyInjected">
+                                <TextBlock Text="Mods Enabled at runtime" DockPanel.Dock="Left"
+                                           Drop="ddDpDropInjected" DragEnter="ddVisibiltyInjected"/>
+                                <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Content="Enable all mods"
+                                        Template="{StaticResource StandardButton}" Drop="ddDpDropInjected" DragEnter="ddVisibiltyInjected"/>
+                                <Button Margin="0,0,5,0" DockPanel.Dock="Right" HorizontalAlignment="Right" Content="Disable all mods" 
+                                        Template="{StaticResource StandardButton}" Drop="ddDpDropInjected" DragOver="ddVisibiltyInjected"/>
+                            </DockPanel>
+
+                            <StackPanel Name="ModsInjectedSP" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                        AllowDrop="True" Drop="ddSpDropInjected" DragEnter="ddVisibiltyInjected"/>
+
+                            <DockPanel Name="ModsPatchedDP" Background="Transparent"
+                                       AllowDrop="True" Drop="ddDpDropPatched" DragOver="ddVisibiltyPatched">
+                                <TextBlock Text="Applied Mods Ahead of time" DockPanel.Dock="Left" Drop="ddDpDropPatched" DragEnter="ddVisibiltyPatched"/>
+                                <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Content="Enable all mods" 
+                                        Template="{StaticResource StandardButton}" Drop="ddDpDropPatched" DragEnter="ddVisibiltyPatched"/>
+                                <Button Margin="0,0,5,0" DockPanel.Dock="Right" HorizontalAlignment="Right" Content="Disable all mods"
+                                        Template="{StaticResource StandardButton}" Drop="ddDpDropPatched" DragOver="ddVisibiltyPatched"/>
+                            </DockPanel>
+
+                            <StackPanel Name="ModsPatchedSP" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                        AllowDrop="True" Drop="ddSpDropPatched" DragOver="ddVisibiltyPatched"/>
+
+                            <DockPanel Name="ModsDisabledDP" Background="Transparent"
+                                       AllowDrop="True" Drop="ddDpDropDisabled" DragEnter="ddVisibiltyDisabled">
+                                <TextBlock Text="Disabled Mods" DockPanel.Dock="Left" Drop="ddDpDropDisabled" DragEnter="ddVisibiltyDisabled"/>
+                                <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Content="Enable all mods" 
+                                        Template="{StaticResource StandardButton}" Drop="ddDpDropDisabled" DragOver="ddVisibiltyDisabled"/>
+                            </DockPanel>
+
+                            <StackPanel Name="ModsDisabledSP" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                        AllowDrop="True" Drop="ddSpDropDisabled" DragEnter="ddVisibiltyDisabled">
+                                <!--
+                                <DockPanel Width="Auto" LastChildFill="False">
+                                    <DockPanel DockPanel.Dock="Top" >
+                                        <CheckBox VerticalAlignment="Center" RenderTransformOrigin="0,0.5">
+                                            <CheckBox.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform ScaleY="1.25" ScaleX="1.25"/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform/>
+                                                    <TranslateTransform/>
+                                                </TransformGroup>
+                                            </CheckBox.RenderTransform>
+                                        </CheckBox>
+                                        <Label Content="Hypersonic Mod" DockPanel.Dock="Left" Foreground="{StaticResource FontColour}"/>
+                                        <Image Source="C:\Users\Ben\Downloads\pfp.png" Width="20" DockPanel.Dock="Right" HorizontalAlignment="Right" Stretch="UniformToFill" Height="20"/>
+                                    </DockPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel DockPanel.Dock="Left" >
+                                            <DockPanel>
+                                                <TextBlock  Text="Description: " Foreground="{StaticResource FontColour}" Width="115" FontSize="18"/>
+                                                <TextBlock Text="A mod that remove all cooldown on tower firing. Tbh just gotta add some xd here to test" Margin="0,0,0,0" Foreground="{StaticResource FontColour}" FontSize="18" TextWrapping="WrapWithOverflow"  HorizontalAlignment="Left"/>
+                                            </DockPanel>
+                                            <DockPanel>
+                                                <TextBlock Text="Type: " DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" Width="115" FontSize="18"/>
+                                                <TextBlock Text="Injection" DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" FontSize="18" TextWrapping="WrapWithOverflow"/>
+                                            </DockPanel>
+                                            <DockPanel>
+                                                <TextBlock Text="Authors: " DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" Width="115" FontSize="18"/>
+                                                <TextBlock Text="Danny Parker, Bowdown097" DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" FontSize="18" TextWrapping="WrapWithOverflow"/>
+                                            </DockPanel>
+                                            <DockPanel>
+                                                <TextBlock Text="Last Updated: " DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" Width="115" FontSize="18"/>
+                                                <TextBlock Text="27/07/2019 at 12:34 pm" DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" FontSize="18" TextWrapping="WrapWithOverflow"/>
+                                            </DockPanel>
+                                            <DockPanel>
+                                                <TextBlock Text="Mod Size: " DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" Width="115" FontSize="18" TextWrapping="WrapWithOverflow"/>
+                                                <TextBlock Text="128 kb" DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" FontSize="18"/>
+                                            </DockPanel>
+                                            <DockPanel>
+                                                <TextBlock Text="Status: " DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" Width="115" FontSize="18"/>
+                                                <TextBlock Text="Disabled" DockPanel.Dock="Left" Foreground="{StaticResource FontColour}" FontSize="18" TextWrapping="WrapWithOverflow"/>
+                                            </DockPanel>
+                                            <Canvas Width="99999" HorizontalAlignment="Stretch" Height="1"/>
+                                        </StackPanel>
+                                        <DockPanel HorizontalAlignment="Right" DockPanel.Dock="Right" MinWidth="125" Grid.Column="1" >
+                                            <DockPanel DockPanel.Dock="Bottom" Width="Auto" Height="25" HorizontalAlignment="Right">
+                                                <Button Content="Dep" Width="32"/>
+                                                <Button Content="Opt" Width="32"/>
+                                                <Button Content="Del" Width="32"/>
+                                            </DockPanel>
+                                            <Image Source="C:\Users\Ben\Downloads\pfp.png" Width="96" DockPanel.Dock="Left" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,0,5"/>
+                                        </DockPanel>
+                                    </Grid>
+                                    <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                    </Canvas>
+                                </DockPanel>
+-->
+                            </StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+
+
+
+
+
+                </Grid>
+            </TabItem>
+
+            <!-- Tab for the user settings that will be stored in a Json file. -->
+            <TabItem Header="Settings">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0">
+                        <Button Margin="0,0,5,0" Grid.Row="0" HorizontalAlignment="Left" Content="Import mod to folder" DockPanel.Dock="Left" Template="{StaticResource StandardButton}" Click="ImportMod"/>
+                        <TextBox HorizontalAlignment="Stretch" DockPanel.Dock="Left" Name="txtModPath" Text="MOD_PATH" Width="550"/>
+                        <Button Grid.Row="0" HorizontalAlignment="Center" Content="..." DockPanel.Dock="Right" Width="58" Template="{StaticResource StandardButton}"/>
+                    </DockPanel>
+                    <DockPanel Grid.Row="1">
+                        <Button Grid.Row="1" HorizontalAlignment="Left" Content="Open Mods Folder" Template="{StaticResource StandardButton}" Click="OpenModsFolder"/>
+                        <Button Grid.Row="1" HorizontalAlignment="Right" Content="Flush Cache" DockPanel.Dock="Right" Template="{StaticResource StandardButton}" Click="FlushCache"/>
+                        <Button Grid.Row="1" Margin="0,0,5,0" HorizontalAlignment="Right" Content="Delete Mods" DockPanel.Dock="Right" Template="{StaticResource StandardButton}" Click="DeleteMods"/>
+                    </DockPanel>
+
+
+                </Grid>
+            </TabItem>
+
+
+            <!-- The development tab is for tools releated to creating mods. -->
+            <TabItem Header="Development">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="32"/>
+
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0">
+                        <Button Grid.Row="0" HorizontalAlignment="Left" Content="Create Mod Project" DockPanel.Dock="Left" Template="{StaticResource StandardButton}"/>
+                        <TextBox HorizontalAlignment="Stretch" DockPanel.Dock="Left" Text="D:\ThisBeARealXDMoment\Mods\EggsDeeMod\EggsDeeMod.vcproj"/>
+                        <Button Grid.Row="0" HorizontalAlignment="Right" Content="..." DockPanel.Dock="Right" Width="32" Template="{StaticResource StandardButton}"/>
+                    </DockPanel>
+
+
+                </Grid>
+            </TabItem>
+
+            <!-- The Utilities tab is the tab for the tools that we've made and we are going to go share to the public- -->
+            <TabItem Header="Utilities">
+                <Grid>
+
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+
+    </Grid>
+</Window>
