@@ -544,6 +544,7 @@ namespace Btd6Launcher
 
                 if (mousepos.Y < modlist.Children[i].TranslatePoint(new Point(0, 0), this).Y)
                 {
+                    // Move Up
                     modlist.Children.Remove(mod);
                     if (i > 0)
                     {
@@ -557,6 +558,7 @@ namespace Btd6Launcher
                 }
                 else if (mousepos.Y < modlist.Children[i].TranslatePoint(new Point(0, 0), this).Y)
                 {
+                    // Move Down
                     modlist.Children.Remove(mod);
                     modlist.Children.Insert(i + 1, mod);
                     return;
@@ -614,7 +616,21 @@ namespace Btd6Launcher
         {
             if (e.Data.GetDataPresent(ModType.Runtime.ToString()) || e.Data.GetDataPresent(ModType.AheadOfTime.ToString()))
             {
-                ModPanel mod = (ModPanel)e.Data.GetData(ModType.Runtime.ToString());
+                ModPanel mod = null;
+                if (e.Data.GetDataPresent(ModType.Runtime.ToString()))
+                {
+                    mod = (ModPanel)e.Data.GetData(ModType.Runtime.ToString());
+                }
+                else if (e.Data.GetDataPresent(ModType.AheadOfTime.ToString()))
+                {
+                    mod = (ModPanel)e.Data.GetData(ModType.AheadOfTime.ToString());
+                }
+
+                if(mod == null)
+                {
+                    return;
+                }
+                
                 StackPanel modlist = (StackPanel)mod.Parent;
                 CheckBox togglemod = (CheckBox)((DockPanel)(mod.Children[1])).Children[0];
                 togglemod.IsChecked = false;
