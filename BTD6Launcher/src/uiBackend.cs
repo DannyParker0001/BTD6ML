@@ -8,8 +8,7 @@ namespace Btd6Launcher.uiBackend
 {
     public class Config
     {
-        string modDir;
-        
+        public string modDir;
     }
 
 
@@ -45,6 +44,7 @@ namespace Btd6Launcher.uiBackend
 
     public class ModInfo
     {
+        private Version InfoVersion = new Version(1, 0);
         public Version version; //Major, Minor, Build, Rev
 
         public string dir;

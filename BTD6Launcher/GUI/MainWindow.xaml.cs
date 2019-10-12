@@ -21,6 +21,8 @@ using System.Runtime.InteropServices;
 using Btd6Launcher.Windows.IO;
 using Btd6Launcher.Steam;
 
+using Newtonsoft.Json;
+
 namespace Btd6Launcher
 {
     /// <summary>
@@ -28,30 +30,11 @@ namespace Btd6Launcher
     /// </summary>
     /// 
 
-
-
-
-
     public partial class MainWindow : Window
     {
-        string modDirectory;
-        string offsetDirectory;
-        public void createModPanel(string dir, string name, string desc, string imageDir,
-            List<string> authors, List<string> contact, DateTime lastUpdated, ulong fileSize, ModType type)
-        {
-            ModPanel mpone = new ModPanel();
-            mpone.modInfo.dir = dir;
-            mpone.modInfo.name = name;
-            mpone.modInfo.longDescription = desc;
-            mpone.modInfo.authors = authors;
-            mpone.modInfo.contact = contact;
-            mpone.modInfo.lastUpdated = lastUpdated;
-            mpone.modInfo.fileSize = fileSize;
-            mpone.modInfo.type = type;
-            mpone.modInfo.icon = imageDir;
-            addMod(mpone, ModsDisabledSP);
-        }
+        Config BTD6Config = new Config();
 
+        
         public MainWindow()
         {
             string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -59,81 +42,73 @@ namespace Btd6Launcher
 
             string configDirectory = roamingDirectory + @"\BloonsModLauncher";
 
+            
+            string btd6Dir = SteamUtils.GetGameDir(SteamUtils.BTD6AppID, SteamUtils.BTD6Name);
+            BTD6Config.modDir = btd6Dir + "\\mods";
+
+            if (!(Directory.Exists(BTD6Config.modDir)))
+            {
+                Directory.CreateDirectory(BTD6Config.modDir);
+            }
+
+            //
+            // Mod file structure is as follows:
+            //
+            // +-- Mods
+            // |    +-- ModName
+            // |    |    +-- ModName.dll
+            // |    |    +-- ModName.btd6modinfo (Json)
+            // |
+            // |    +-- ModName2
+            // |    |   +-- ModName2.dll
+            // |    |   +-- ModName2.btd6modinfo (Json)
+            // |    
+            // ...
+            // 
+            // Why not just use .json?
+            // To allow mod creators to use .json files without confusing the launcher.
+            //
             InitializeComponent();
 
-            //string[] mods = Directory.GetFiles("PATHPATHPATHPATH", "*.btd6mod", SearchOption.AllDirectories);
+            string[] modDirs = Directory.GetFiles(btd6Dir, "*.btd6modinfo", SearchOption.AllDirectories);
 
+            ModInfo testInfo = new ModInfo();
+            testInfo.name = "Test Mod";
+            testInfo.type = ModType.AheadOfTime;
+            testInfo.version = new Version(1, 0, 0);
+            testInfo.shortDescription = "A mod for testing";
+            testInfo.longDescription = "A mod that's used for testing the GUI of the moad loader.\n The mod can also be used to test the API!";
+            testInfo.icon = "icon.png";
+            testInfo.authors = new List<string> { "Danny Parker" };
+            testInfo.contact = new List<string> { "Danny Parker#0001 on discord" };
+            testInfo.lastUpdated = DateTime.Now;
 
-            createModPanel
-                ("",
-                "Hypersonic Mod",
-                "Makes towers fire VERY fast.",
-                @"pack://application:,,,/GUI/Resources/DropDown.png",
-                new List<string>(new string[] { "BowDown097" }),
-                new List<string>(new string[] { "BowDown097#4881 on Discord or in the BTD6 Modding discord." }),
-                new DateTime(2020, 1, 1),
-                0,
-                ModType.Runtime);
+            string TestModInfo = JsonConvert.SerializeObject(testInfo);
 
-            createModPanel
-                ("",
-                "No Limits Editor",
-                "Removes the restrictions (mostly) on the game's Challenge Editor. For example, the limit for rounds is 9999 instead of 300. (The limits not being infinite are due to character amount restrictions in text boxes)",
-                @"pack://application:,,,/GUI/Resources/DropDown.png",
-                new List<string>(new string[] { "BowDown097" }),
-                new List<string>(new string[] { "BowDown097#4881 on Discord or in the BTD6 Modding discord." }),
-                new DateTime(2020, 1, 1),
-                0,
-                ModType.Runtime);
+            //File.WriteAllText(@"C:\SteamLibrary\steamapps\common\BloonsTD6\Mods\TestMod\TestMod.btd6modinfo", TestModInfo);
 
-            createModPanel
-                ("",
-                "Place Anywhere",
-                "Allows you to place anything anywhere. You can place water towers on land, land towers on water, your towers in other people's areas in co-op, etc.",
-                @"pack://application:,,,/GUI/Resources/DropDown.png",
-                new List<string>(new string[] { "BowDown097" }),
-                new List<string>(new string[] { "BowDown097#4881 on Discord or in the BTD6 Modding discord." }),
-                new DateTime(2020, 1, 1),
-                0,
-                ModType.Runtime);
+            List<ModInfo> ModList = new List<ModInfo>();
+            ModInfo modinfo = null;
 
-            createModPanel
-                ("",
-                "Profanity Filter Remover",
-                "You can make challenges named 'fuck' and 'shit' and all that fun stuff now, no holding you back.",
-                @"pack://application:,,,/GUI/Resources/DropDown.png",
-                new List<string>(new string[] { "BowDown097" }),
-                new List<string>(new string[] { "BowDown097#4881 on Discord or in the BTD6 Modding discord." }),
-                new DateTime(2020, 1, 1),
-                0,
-                ModType.Runtime);
+            for(int i = 0; i < modDirs.Length; i++)
+            {
+                string json = File.ReadAllText(modDirs[i]);
 
-            createModPanel
-                ("",
-                "Unlimited 5th Tiers",
-                "Removes the limit of only one 5th tier tower.",
-                @"pack://application:,,,/GUI/Resources/DropDown.png",
-                new List<string>(new string[] { "BowDown097" }),
-                new List<string>(new string[] { "BowDown097#4881 on Discord or in the BTD6 Modding discord." }),
-                new DateTime(2020, 1, 1),
-                0,
-                ModType.Runtime);
+                    modinfo = JsonConvert.DeserializeObject<ModInfo>(json);
 
-            createModPanel
-                ("",
-                "Test AOT mod",
-                    "Literally does fucking nothing, just for testing GUI.",
-                @"pack://application:,,,/GUI/Resources/DropDown.png",
-                new List<string>(new string[] { "BowDown097" }),
-                new List<string>(new string[] { "BowDown097#4881 on Discord or in the BTD6 Modding discord." }),
-                new DateTime(2020, 1, 1),
-                0,
-                ModType.AheadOfTime);
+                if(modinfo != null)
+                {
+                    ModList.Add(modinfo);
+                }
+            }
+
+            for(int i = 0; i < ModList.Count; i++)
+            {
+                addMod(ModList[i]);
+            }
+
 
         }
-
-
-
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -160,18 +135,36 @@ namespace Btd6Launcher
                 //    FileExports = PE.dumpSymbolsFromFile(pBin);
                 //}
 
-                string dir = SteamUtils.GetGameDir(SteamUtils.BTD6AppID, SteamUtils.BTD6Name);
-
-
 
                 int x = 5;
             }
 
         }
 
+        public void createModPanel(string dir, string name, string desc, string imageDir,
+        List<string> authors, List<string> contact, DateTime lastUpdated, ulong fileSize, ModType type)
+        {
+            ModPanel mpone = new ModPanel();
+            mpone.modInfo.dir = dir;
+            mpone.modInfo.name = name;
+            mpone.modInfo.longDescription = desc;
+            mpone.modInfo.authors = authors;
+            mpone.modInfo.contact = contact;
+            mpone.modInfo.lastUpdated = lastUpdated;
+            mpone.modInfo.fileSize = fileSize;
+            mpone.modInfo.type = type;
+            mpone.modInfo.icon = imageDir;
+            addModPanel(mpone, ModsDisabledSP);
+        }
 
+        void addMod(ModInfo modInfo)
+        {
+            ModPanel mp = new ModPanel();
+            mp.modInfo = modInfo;
+            addModPanel(mp, ModsDisabledSP);
+        }
 
-        void addMod(ModPanel mod, StackPanel destination)
+        void addModPanel(ModPanel mod, StackPanel destination)
         {
             Brush fontColour = (Brush)(this.FindResource("FontColour"));
 
@@ -189,7 +182,8 @@ namespace Btd6Launcher
 
             //Without this, where there's nothing the click even goes to the background StackPanel
             //Rather than this dockpanel.
-            mod.Background = foregroundColour;
+            mod.Background = midgroundColour;
+            
 
             Canvas header = new Canvas();
             header.Background = midgroundColour;
@@ -202,6 +196,7 @@ namespace Btd6Launcher
             DockPanel.SetDock(mainDock, Dock.Top);
             mainDock.Margin = new Thickness(0, 2, 0, 0);
             mainDock.HorizontalAlignment = HorizontalAlignment.Stretch;
+            mainDock.Background = midgroundColour;
 
             CheckBox modChecked = new CheckBox();
             TextBlock modName = new TextBlock();
@@ -222,7 +217,7 @@ namespace Btd6Launcher
             DockPanel.SetDock(modName, Dock.Left);
             modName.Foreground = fontColour;
 
-            dropDown.Source = new BitmapImage(new Uri(mod.modInfo.icon));
+            dropDown.Source = new BitmapImage(new Uri(@"pack://application:,,,/GUI/Resources/DropDown.png"));
             dropDown.Width = 24;
             dropDown.HorizontalAlignment = HorizontalAlignment.Right;
             dropDown.Margin = new Thickness(0, 0, 5, 0);
@@ -247,6 +242,7 @@ namespace Btd6Launcher
             //These controls will only be visible whilst in expanded form.
             #region Collapsable
             Grid elementGrid = new Grid();
+            elementGrid.Background = midgroundColour;
 
             ColumnDefinition leftColumn = new ColumnDefinition();
 
@@ -254,10 +250,11 @@ namespace Btd6Launcher
             rightColumn.Width = new GridLength(100);
 
             elementGrid.ColumnDefinitions.Add(leftColumn);
-            elementGrid.ColumnDefinitions.Add(rightColumn);
+            elementGrid.ColumnDefinitions.Add(rightColumn);         
 
             StackPanel infoDock = new StackPanel();
             DockPanel.SetDock(infoDock, Dock.Left);
+            infoDock.Background = midgroundColour;
 
             int leftPanelWidth = 115;
 
@@ -276,7 +273,20 @@ namespace Btd6Launcher
             _typeKey.Text = "Type : ";
             _typeKey.Width = leftPanelWidth;
             TextBlock _typeValue = new TextBlock();
-            _typeValue.Text = mod.modInfo.type.ToString();
+            switch (mod.modInfo.type)
+            {
+                case ModType.AheadOfTime:
+                    _typeValue.Text = "Ahead of Time";
+                    break;
+
+                case ModType.Runtime:
+                    _typeValue.Text = "Runtime";
+                    break;
+
+                default:
+                    _typeValue.Text = "Invalid Type";
+                    break;
+            }
             _typeValue.TextWrapping = TextWrapping.Wrap;
             _type.Children.Add(_typeKey);
             _type.Children.Add(_typeValue);
@@ -377,7 +387,9 @@ namespace Btd6Launcher
             buttonDock.Children.Add(delete);
 
             Image icon = new Image();
-            icon.Source = new BitmapImage(new Uri(@"pack://application:,,,/GUI/Resources/placeholder.png"));
+
+            icon.Source = new BitmapImage(new Uri(BTD6Config.modDir + "\\" + mod.modInfo.name + "\\" + mod.modInfo.icon));
+            
             icon.Width = 96;
             icon.VerticalAlignment = VerticalAlignment.Bottom;
             icon.HorizontalAlignment = HorizontalAlignment.Right;
@@ -402,11 +414,11 @@ namespace Btd6Launcher
             mod.Drop += new DragEventHandler(this.ddPanelDrop);
 
             mod.AllowDrop = true;
+            
 
 
             destination.Children.Add(mod);
         }
-
 
 
 
@@ -805,6 +817,108 @@ namespace Btd6Launcher
 
         }
 
+        private void DocWebBrowser_Loaded(object sender, RoutedEventArgs e)
+        {
+            string ApplicationDir = Directory.GetCurrentDirectory();
+            DocWebBrowser.Navigate(new Uri("file:///" + ApplicationDir + "/doc/doc.html"));
+        }
 
+        private void DevWriteMod_Click(object sender, RoutedEventArgs e)
+        {
+            //
+            // TODO: This needs a lot of quality of life improvments
+            //
+
+            ModInfo mi = new ModInfo();
+
+            
+            if(DevModListBox.Text == null)
+            {
+                throw new Exception("Error, Project not selected");
+            }
+
+            if (DevModListBox.Text == "{ Create New Project }")
+            {
+                mi.name = DevModNameTextbox.Text;
+            }
+            else
+            {
+                mi.name = DevModListBox.Text;
+            }
+
+            if (DevModType.SelectedItem == DevModTypeRuntime)
+            {
+                mi.type = ModType.Runtime;
+            }
+            else if (DevModType.SelectedItem == DevModTypeAOT)
+            {
+                mi.type = ModType.AheadOfTime;
+            }
+            else
+            {
+                throw new Exception("Error, No mod type selected");
+            }
+
+            if(DevModShortDescription == null)
+            {
+                throw new Exception("Error, No mod short description was provided");
+            }
+            else
+            {
+                mi.shortDescription = DevModShortDescription.Text;
+            }
+
+            if(DevModLongDescription == null)
+            {
+                throw new Exception("Error, no mod long descirption was provided");
+            }
+            else
+            {
+                mi.longDescription = DevModLongDescription.Text;
+            }
+
+            if(DevModAuthors.Text == null)
+            {
+                throw new Exception("Error, no mod authors were provided");
+            }
+            else
+            {
+                string[] Authors = DevModAuthors.Text.Split('\n');
+                mi.authors = Authors.ToList();
+            }
+
+            if(DevModContact.Text == null)
+            {
+                throw new Exception("Error, no mod contacts were provided");
+            }
+            else
+            {
+                string[] Contact = DevModContact.Text.Split('\n');
+                mi.contact = Contact.ToList();
+            }
+
+            if(DevModIconPath == null)
+            {
+                throw new Exception("Error, no Icon path provided");
+            }
+            else
+            {
+                mi.icon = DevModIconPath.Text;
+            }
+
+            // TODO: Dependencies and extensions...
+
+            // TODO: File size, last updated...
+
+            string OutputJson = JsonConvert.SerializeObject(mi);
+
+            if(!(Directory.Exists(BTD6Config.modDir + "\\" + mi.name)))
+            {
+                Directory.CreateDirectory(BTD6Config.modDir + "\\" + mi.name);
+            }
+
+            File.WriteAllText(BTD6Config.modDir + "\\" + mi.name + "\\" + mi.name + ".btd6modinfo", OutputJson);
+
+        }
     }
 }

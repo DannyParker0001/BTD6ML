@@ -1,13 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:NewBtd6Launcher.Resources">
-    
+
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Colours.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <ControlTemplate x:Key="StandardButton" TargetType="{x:Type Button}">
-        <Border x:Name="border" Background="{StaticResource ColourButton}">
+        <Border x:Name="border" Background="{StaticResource ColourButton}" CornerRadius="2,2,2,2" Padding="4, 4">
             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}"/>
         </Border>
         <ControlTemplate.Triggers>
@@ -18,9 +18,7 @@
     </ControlTemplate>
 
 
-
     <Style TargetType="{x:Type TabItem}">
-
         <Setter Property="Background" Value="{StaticResource ColourButton}"/>
         <Setter Property="BorderBrush" Value="{StaticResource ColourMidground}"/>
         <Setter Property="Foreground" Value="{StaticResource FontColour}"/>
@@ -32,7 +30,7 @@
                     <Border Margin="0,0,3,0">
                         <Grid>
                             <Grid>
-                                <Border x:Name="border" CornerRadius="3,3,3,3" Background="{StaticResource ColourButton}"/>
+                                <Border x:Name="border" CornerRadius="2,2,2,2" Background="{StaticResource ColourButton}"/>
                             </Grid>
                             <ContentPresenter ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Grid>
@@ -53,11 +51,153 @@
     <Style TargetType="{x:Type Button}">
         <Setter Property="Foreground" Value="{StaticResource FontColour}"/>
         <Setter Property="FontSize" Value="18"/>
+    </Style>
 
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FFFBE618" />
+
+    <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="20" />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="Border" Grid.ColumnSpan="2" CornerRadius="2"
+                Background="{StaticResource ColourMidground}"
+                BorderThickness="1" />
+            <Border 
+                Grid.Column="0"
+                CornerRadius="2,0,0,2" 
+                Margin="1" 
+                Background="{StaticResource ColourForeground}" 
+                BorderThickness="0,0,1,0" />
+            <Path 
+                x:Name="Arrow"
+                Grid.Column="1"     
+                Fill="{StaticResource FontColour}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Data="M 0 0 L 4 4 L 8 0 Z"/>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ComboBoxTextBox"
+                 TargetType="{x:Type TextBox}">
+        <Border x:Name="PART_ContentHost"
+          Focusable="False"
+          Background="{TemplateBinding Background}" />
+
+    </ControlTemplate>
+
+    <Style TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="Foreground" Value="{StaticResource FontColour}"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                    <Border x:Name="Border"
+                Padding="2"
+                SnapsToDevicePixels="true"
+                Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
+                                                Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                            <EasingColorKeyFrame KeyTime="0"
+                                         Value="Gray" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 
+    <Style TargetType="{x:Type ComboBox}">
+        <Setter Property="Foreground" Value="{StaticResource FontColour}"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton 
+                            Name="ToggleButton" 
+                            Template="{StaticResource ComboBoxToggleButton}" 
+                            Grid.Column="2" 
+                            Focusable="false"
+                            IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                            ClickMode="Press">
+                        </ToggleButton>
+                        <ContentPresenter x:Name="ContentSite"
+                            IsHitTestVisible="False"
+                            Content="{TemplateBinding SelectionBoxItem}"
+                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            Margin="3,3,23,3"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Left">
+                        </ContentPresenter>
+                        <TextBox x:Name="PART_EditableTextBox"
+                            Style="{x:Null}"
+                            Template="{StaticResource ComboBoxTextBox}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Margin="3,3,23,3"
+                            Focusable="True"
+                            Background="Transparent"
+                            Visibility="Hidden"
+                            IsReadOnly="{TemplateBinding IsReadOnly}"
+                            Foreground="{StaticResource FontColour}"/>
+
+                        <Popup 
+                            Name="Popup"
+                            Placement="Bottom"
+                            IsOpen="{TemplateBinding IsDropDownOpen}"
+                            AllowsTransparency="True" 
+                            Focusable="False"
+                            PopupAnimation="Slide">
+                            <Grid 
+                                Name="DropDown"
+                                SnapsToDevicePixels="True"                
+                                MinWidth="{TemplateBinding ActualWidth}"
+                                MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border 
+                                     x:Name="DropDownBorder"
+                                     Background="{StaticResource ColourMidground}"
+                                     BorderThickness="1"/>
+                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="{StaticResource FontColour}"/>
+        <Setter Property="Background" Value="{StaticResource ColourForeground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ColourMidground}"/>
+    </Style>    
+
+
     <Style TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Foreground" Value="{StaticResource FontColour}"/>
+    </Style>
+
+    <Style TargetType="{x:Type Label}">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="Foreground" Value="{StaticResource FontColour}"/>
     </Style>
@@ -69,5 +209,8 @@
     <Style TargetType="{x:Type StackPanel}">
         <Setter Property="Background" Value="{StaticResource ColourBackground}"/>
     </Style>
+
+
+
 
 </ResourceDictionary>

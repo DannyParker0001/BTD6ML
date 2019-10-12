@@ -635,9 +635,9 @@ namespace Btd6Launcher.Windows.PE
             return ntHeaders;
         }
 
-        public static unsafe Dictionary<string, UInt64> dumpSymbolsFromMemory(byte* pBin)
+        public static unsafe Dictionary<string, UInt32> dumpSymbolsFromMemory(byte* pBin)
         {
-            Dictionary<string, UInt64> ExportTable = new Dictionary<string, UInt64>();
+            Dictionary<string, UInt32> ExportTable = new Dictionary<string, UInt32>();
 
             NTHeaders* ntHeaders = GetNtHeaders(pBin);
 
@@ -665,9 +665,9 @@ namespace Btd6Launcher.Windows.PE
             return ExportTable;
         }
 
-        public static unsafe Dictionary<string, UInt64> dumpSymbolsFromFile(byte* pBin)
+        public static unsafe Dictionary<string, UInt32> dumpSymbolsFromFile(byte* pBin)
         {
-            Dictionary<string, UInt64> ExportTable = new Dictionary<string, UInt64>();
+            Dictionary<string, UInt32> ExportTable = new Dictionary<string, UInt32>();
 
             NTHeaders* ntHeaders = GetNtHeaders(pBin);
 
@@ -681,10 +681,10 @@ namespace Btd6Launcher.Windows.PE
 
             for (UInt32 i = 0; i < exportDir->NumberOfNames; i++)
             {
-                UInt64 offset = RVAtoOffset((*(UInt32*)(pBin + RVAtoOffset(exportDir->AddressOfFunctions, ntHeaders, pBin) + (i * sizeof(UInt32)))), ntHeaders, pBin);
+                UInt32 offset = (UInt32)RVAtoOffset((*(UInt32*)(pBin + RVAtoOffset(exportDir->AddressOfFunctions, ntHeaders, pBin) + (i * sizeof(UInt32)))), ntHeaders, pBin);
 
 
-                UInt64 nameOffset = RVAtoOffset((UInt32)exportDir->AddressOfNames, ntHeaders, pBin) + (i * sizeof(UInt32));
+                UInt32 nameOffset = (UInt32)RVAtoOffset((UInt32)exportDir->AddressOfNames, ntHeaders, pBin) + (i * sizeof(UInt32));
 
                 string methodName = Marshal.PtrToStringAnsi((IntPtr)
                 (pBin + RVAtoOffset((*(UInt32*)(pBin + nameOffset)), ntHeaders, pBin)));

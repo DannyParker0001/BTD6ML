@@ -7,6 +7,8 @@
     <SolidColorBrush x:Key="ColourBackground" Color="#424242"/>
     <SolidColorBrush x:Key="ColourMidground" Color="#333333"/>
     <SolidColorBrush x:Key="ColourForeground" Color="#222222"/>
+    <SolidColorBrush x:Key="SelectionBrush" Color="#424269"/>
+
 
     <SolidColorBrush x:Key="ColourButton" Color="#222222"/>
     <SolidColorBrush x:Key="ColourText" Color="#ff00ff"/>

@@ -169,17 +169,63 @@
             <TabItem Header="Development">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition Height="32"/>
-
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <DockPanel Grid.Row="0">
-                        <Button Grid.Row="0" HorizontalAlignment="Left" Content="Create Mod Project" DockPanel.Dock="Left" Template="{StaticResource StandardButton}"/>
-                        <TextBox HorizontalAlignment="Stretch" DockPanel.Dock="Left" Text="D:\ThisBeARealXDMoment\Mods\EggsDeeMod\EggsDeeMod.vcproj"/>
-                        <Button Grid.Row="0" HorizontalAlignment="Right" Content="..." DockPanel.Dock="Right" Width="32" Template="{StaticResource StandardButton}"/>
-                    </DockPanel>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
+                    <!-- Column Definitions did not appear to work -->
+                    
+                    <Label Grid.Row="0" Grid.Column="0" Content="Mod Project:"/>
+                    <ComboBox Grid.Row="0" Grid.Column="1" x:Name="DevModListBox">
+                        <ComboBoxItem Name="DevModProjectNew">{ Create New Project }</ComboBoxItem>
+                    </ComboBox>
 
+                    <Label Grid.Row="1" Grid.Column="0" Content="Mod Type:"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" x:Name="DevModType">
+                        <ComboBoxItem Name="DevModTypeRuntime">Runtime</ComboBoxItem>
+                        <ComboBoxItem Name="DevModTypeAOT">Ahead Of Time</ComboBoxItem>
+                    </ComboBox>
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="Mod Name:"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" x:Name="DevModNameTextbox"/>
+
+                    <Label Grid.Row="3" Grid.Column="0" Content="Short Description:"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" x:Name="DevModShortDescription"/>
+
+                    <Label Grid.Row="4" Grid.Column="0" Content="Long Description:"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" x:Name="DevModLongDescription"/>
+
+                    <Label Grid.Row="5" Grid.Column="0" Content="Authors:"/>
+                    <TextBox Grid.Row="5" Grid.Column="1" x:Name="DevModAuthors" AcceptsReturn="True"/>
+
+                    <Label Grid.Row="6" Grid.Column="0" Content="Contact:"/>
+                    <TextBox Grid.Row="6" Grid.Column="1" x:Name="DevModContact" AcceptsReturn="True"/>
+
+                    <Label Grid.Row="7" Grid.Column="0" Content="Relative Icon Path:"/>
+                    <TextBox Grid.Row="7" Grid.Column="1" x:Name="DevModIconPath"/>
+
+                    <!-- Deps & Extensions will need to be a stackpanel of combo boxes -->
+                    
+                    <Label Grid.Row="8" Grid.Column="0" Content="Dependencies:"/>
+                    <ComboBox Grid.Row="8" Grid.Column="1" x:Name="DevModDependencies"/>
+
+                    <Label Grid.Row="9" Grid.Column="0" Content="Extensions:"/>
+                    <ComboBox Grid.Row="9" Grid.Column="1" x:Name="DevModExtensions"/>
+
+                    <Button Grid.Row="10" Grid.Column="1" x:Name="DevWriteMod" Content="Write Mod" Width="Auto" HorizontalAlignment="Right" Template="{StaticResource StandardButton}" Click="DevWriteMod_Click"/>
                 </Grid>
             </TabItem>
 
@@ -187,6 +233,14 @@
             <TabItem Header="Utilities">
                 <Grid>
 
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Documentation">
+                <Grid>
+                    <WebBrowser x:Name="DocWebBrowser" Loaded="DocWebBrowser_Loaded">
+                        
+                    </WebBrowser>
                 </Grid>
             </TabItem>
 
