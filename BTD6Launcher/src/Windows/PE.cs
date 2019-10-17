@@ -584,10 +584,7 @@ namespace Btd6Launcher.Windows.PE
         // RVA = Offset + (SectionHeader.VirtualAddress - SectionTable.PointerToRawData)
         // 
 
-        //
-        // This is no longer used.
-        //
-        private static unsafe UInt64 RVAtoOffset(UInt64 rva, NTHeaders* ntHeaders, byte* pBin)
+        public static unsafe UInt64 RVAtoOffset(UInt64 rva, NTHeaders* ntHeaders, byte* pBin)
         {
 
             MS_DOS_Stub* stub = (MS_DOS_Stub*)(pBin);
@@ -605,7 +602,7 @@ namespace Btd6Launcher.Windows.PE
             throw new Exception("Erorr: Could not map RVA to Offset.");
         }
 
-        private static unsafe NTHeaders* GetNtHeaders(byte* pBin)
+        public static unsafe NTHeaders* GetNtHeaders(byte* pBin)
         {
             // Bin is binary btw. Imo clearer than using peFile.
 

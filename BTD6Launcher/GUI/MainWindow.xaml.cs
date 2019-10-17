@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Newtonsoft.Json;
 using System.IO;
 
 using Btd6Launcher.Windows.PE;
@@ -20,6 +19,8 @@ using Btd6Launcher.uiBackend;
 using System.Runtime.InteropServices;
 using Btd6Launcher.Windows.IO;
 using Btd6Launcher.Steam;
+using Btd6Launcher.API.Internals;
+using Btd6Launcher.Log;
 
 using Newtonsoft.Json;
 
@@ -32,23 +33,28 @@ namespace Btd6Launcher
 
     public partial class MainWindow : Window
     {
-        Config BTD6Config = new Config();
+        Config launcherConfig = new Config();
 
         
         public MainWindow()
         {
             string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string roamingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-            string configDirectory = roamingDirectory + @"\BloonsModLauncher";
+            //%USERPROFILE%\AppData\LocalLow
+            launcherConfig.configDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Appdata\\LocalLow\\BloonsModLauncher";
 
-            
-            string btd6Dir = SteamUtils.GetGameDir(SteamUtils.BTD6AppID, SteamUtils.BTD6Name);
-            BTD6Config.modDir = btd6Dir + "\\mods";
-
-            if (!(Directory.Exists(BTD6Config.modDir)))
+            if (!(Directory.Exists(launcherConfig.configDir)))
             {
-                Directory.CreateDirectory(BTD6Config.modDir);
+                Directory.CreateDirectory(launcherConfig.configDir);
+            }
+
+
+            launcherConfig.btd6Dir = SteamUtils.GetGameDir(SteamUtils.BTD6AppID, SteamUtils.BTD6Name);
+            launcherConfig.modDir = launcherConfig.btd6Dir + "\\mods";
+
+            if (!(Directory.Exists(launcherConfig.modDir)))
+            {
+                Directory.CreateDirectory(launcherConfig.modDir);
             }
 
             //
@@ -70,22 +76,8 @@ namespace Btd6Launcher
             //
             InitializeComponent();
 
-            string[] modDirs = Directory.GetFiles(btd6Dir, "*.btd6modinfo", SearchOption.AllDirectories);
+            string[] modDirs = Directory.GetFiles(launcherConfig.btd6Dir, "*.btd6modinfo", SearchOption.AllDirectories);
 
-            ModInfo testInfo = new ModInfo();
-            testInfo.name = "Test Mod";
-            testInfo.type = ModType.AheadOfTime;
-            testInfo.version = new Version(1, 0, 0);
-            testInfo.shortDescription = "A mod for testing";
-            testInfo.longDescription = "A mod that's used for testing the GUI of the moad loader.\n The mod can also be used to test the API!";
-            testInfo.icon = "icon.png";
-            testInfo.authors = new List<string> { "Danny Parker" };
-            testInfo.contact = new List<string> { "Danny Parker#0001 on discord" };
-            testInfo.lastUpdated = DateTime.Now;
-
-            string TestModInfo = JsonConvert.SerializeObject(testInfo);
-
-            //File.WriteAllText(@"C:\SteamLibrary\steamapps\common\BloonsTD6\Mods\TestMod\TestMod.btd6modinfo", TestModInfo);
 
             List<ModInfo> ModList = new List<ModInfo>();
             ModInfo modinfo = null;
@@ -135,6 +127,10 @@ namespace Btd6Launcher
                 //    FileExports = PE.dumpSymbolsFromFile(pBin);
                 //}
 
+                
+                AheadOfTime.Initialise(launcherConfig);
+
+                Logger.initialise(launcherConfig.configDir);
 
                 int x = 5;
             }
@@ -303,7 +299,13 @@ namespace Btd6Launcher
             {
                 if (i != 0)
                 {
-                    authors += ", ";
+                    // If there's a line break, dont put the comma.
+                    // I - 1 should never be out of bounds, I=0 is skipped.
+                    if (!(mod.modInfo.authors[i - 1].Last() == '\n' || mod.modInfo.authors[i - 1].Last() == '\r')) 
+                    {
+                        authors += ", ";
+                    }
+                    
                 }
                 authors += mod.modInfo.authors[i];
             }
@@ -388,7 +390,7 @@ namespace Btd6Launcher
 
             Image icon = new Image();
 
-            icon.Source = new BitmapImage(new Uri(BTD6Config.modDir + "\\" + mod.modInfo.name + "\\" + mod.modInfo.icon));
+            icon.Source = new BitmapImage(new Uri(launcherConfig.modDir + "\\" + mod.modInfo.name + "\\" + mod.modInfo.icon));
             
             icon.Width = 96;
             icon.VerticalAlignment = VerticalAlignment.Bottom;
@@ -712,8 +714,6 @@ namespace Btd6Launcher
 
 
 
-
-
         public void toggleCollapsed(object sender)
         {
             ModPanel mod = (ModPanel)(sender);
@@ -893,7 +893,7 @@ namespace Btd6Launcher
             }
             else
             {
-                string[] Contact = DevModContact.Text.Split('\n');
+                string[] Contact = DevModContact.Text.Split(new string[] { "\r\n" }, StringSplitOptions.None);
                 mi.contact = Contact.ToList();
             }
 
@@ -912,12 +912,12 @@ namespace Btd6Launcher
 
             string OutputJson = JsonConvert.SerializeObject(mi);
 
-            if(!(Directory.Exists(BTD6Config.modDir + "\\" + mi.name)))
+            if(!(Directory.Exists(launcherConfig.modDir + "\\" + mi.name)))
             {
-                Directory.CreateDirectory(BTD6Config.modDir + "\\" + mi.name);
+                Directory.CreateDirectory(launcherConfig.modDir + "\\" + mi.name);
             }
 
-            File.WriteAllText(BTD6Config.modDir + "\\" + mi.name + "\\" + mi.name + ".btd6modinfo", OutputJson);
+            File.WriteAllText(launcherConfig.modDir + "\\" + mi.name + "\\" + mi.name + ".btd6modinfo", OutputJson);
 
         }
     }

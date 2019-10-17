@@ -8,7 +8,12 @@ namespace Btd6Launcher.uiBackend
 {
     public class Config
     {
+        public string btd6Dir;
         public string modDir;
+        public string configDir; //%USERPROFILE%\AppData\LocalLow
+
+        public string originalGameAssembly;
+        public Version originalGameAssemblyVersion;
     }
 
 
